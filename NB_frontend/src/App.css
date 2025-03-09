@@ -38,7 +38,7 @@
 }
 
 .read-the-docs {
-  color: #888;
+  color: #000000;
 }
 
 .container {
@@ -91,7 +91,7 @@
   width: 100%;
   padding: 12px;
   background-color: #007bff;
-  color: white;
+  color: rgb(0, 0, 0);
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -117,7 +117,7 @@
 
 .result-container {
   background-color: #222222;
-  color: white;
+  color: rgb(0, 0, 0);
   padding: 15px;
   border-radius: 5px;
   margin-top: 20px;
@@ -133,7 +133,7 @@
   padding: 5px;
   margin: 5px 0;
   background-color: grey;
-  color: white;
+  color: rgb(0, 0, 0);
   border-radius: 3px;
   text-align: center;
 }
