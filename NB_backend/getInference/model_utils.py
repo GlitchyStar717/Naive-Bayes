@@ -12,57 +12,95 @@ file_path = "ds_salaries.csv"
 
 class NaiveBayesClassifier:
     def __init__(self):
-        self.priori_of_class = {}
+        self.classes = None
         self.feature_given_class = {}
-        self.classes = []
+        self.priori_of_class = {}
         
-    def fit(self, df_containing_features, classes ):
+    def fit(self, df_containing_features, classes):
         self.classes = np.unique(classes)
         no_of_data_provided = len(classes)
         
-        #Find the priori P(Class) of each nationality
-        unique_classes, count_of_unique_classes = np.unique(classes, return_counts = True)
-        for i in range(len(unique_classes)):
-            self.priori_of_class[unique_classes[i]]=count_of_unique_classes[i] / no_of_data_provided
-
-        #Find the P(Feature | Class) for each feature and class combination
-        columns = df_containing_features.columns
+        # Calculate prior probabilities with Laplace smoothing
+        unique_classes, count_of_unique_classes = np.unique(classes['employee_residence'], return_counts=True)
+        self.priori_of_class = dict(zip(unique_classes, (count_of_unique_classes + 1)/(no_of_data_provided + len(unique_classes))))
         
-            #Find the P(Feature) for every feature in every column
+        # Calculate feature probabilities with Laplace smoothing
+        columns = df_containing_features.columns
+        probability_of_feature_and_class = {}
         probability_of_features = {}
+        
         for column in columns:
-            unique_features_in_column, count_of_unique_features_in_column = np.unique(df_containing_features[column],return_counts = True)
-            for i in range(len(unique_features_in_column)):
-                probability_of_features[unique_features_in_column[i]] = count_of_unique_features_in_column[i]/no_of_data_provided
-
-            #Find the P(Feature & Class) for each feature and class combination
-        probability_of_feature_and_class = defaultdict(lambda:defaultdict(float))
-        for column in columns:
-            unique_features_in_column, count_of_unique_features_in_column = np.unique(df_containing_features[column],return_counts = True)
+            unique_features_in_column, count_of_unique_features_in_column = np.unique(df_containing_features[column], return_counts=True)
+            
+            # Calculate P(feature) with smoothing
+            probability_of_features.update(
+                dict(zip(unique_features_in_column, 
+                        (count_of_unique_features_in_column + 1)/(no_of_data_provided + len(unique_features_in_column))))
+            )
+            
             for feature in unique_features_in_column:
-                for Class in unique_classes:
+                for Class in self.classes:
                     condition = (df_containing_features[column]==feature) & (classes['employee_residence']==Class)
                     count = np.sum(condition)
-                    probability_of_feature_and_class[(feature,Class)]=count/no_of_data_provided
-                    self.feature_given_class[(feature,Class)] = probability_of_feature_and_class[(feature,Class)]*probability_of_features[feature]/self.priori_of_class[Class]
+                    # Apply Laplace smoothing for conditional probabilities
+                    class_count = np.sum(classes['employee_residence']==Class)
+                    probability_of_feature_and_class[(feature,Class)] = (count + 1)/(class_count + len(unique_features_in_column))
+                    
+                    # Calculate P(feature|class) using Bayes theorem
+                    self.feature_given_class[(feature,Class)] = probability_of_feature_and_class[(feature,Class)]
 
-    def predict(self,df_containing_features):
+    def predict_with_steps(self, df_containing_features):
         predictions = pd.DataFrame({'employee_residence':[]})
-        probability_of_being_class = {}
+        calculation_steps = []
+        
         for row in df_containing_features.itertuples(index=False):
+            probability_of_being_class = {}
+            feature_contributions = {Class: [] for Class in self.classes}
+            
             for Class in self.classes:
-                class_given_features = self.priori_of_class[Class]
+                # Start with log of prior probability
+                log_probability = np.log(self.priori_of_class[Class])
+                
                 for feature in row:
-                    if(feature,Class) in self.feature_given_class:
-                    #Not dividing my P(Features) since it's same irrespective of the Class, for each Class.                
-                        class_given_features *= self.feature_given_class[(feature,Class)]
-                    else:
-                        class_given_features *= 1e-6
-                probability_of_being_class[Class]=class_given_features
-            predictions.loc[len(predictions)] = max(probability_of_being_class,key=probability_of_being_class.get)
+                    # Get likelihood with smoothing for unseen features
+                    likelihood = self.feature_given_class.get((feature, Class), 1.0/len(self.classes))
+                    # Add log of likelihood
+                    log_probability += np.log(likelihood)
+                    
+                    feature_contributions[Class].append({
+                        'feature': str(feature),
+                        'likelihood': float(likelihood)
+                    })
+                
+                # Convert back from log space
+                probability_of_being_class[Class] = float(np.exp(log_probability))
+            
+            # Normalize probabilities
+            total = sum(probability_of_being_class.values())
+            final_probabilities = {
+                k: v/total if total > 0 else 1.0/len(self.classes)
+                for k, v in probability_of_being_class.items()
+            }
+            
+            step_data = {
+                'final_probabilities': final_probabilities,
+                'feature_contributions': feature_contributions
+            }
+            calculation_steps.append(step_data)
+            
+            # Add prediction
+            predicted_class = max(probability_of_being_class, key=probability_of_being_class.get)
+            predictions.loc[len(predictions)] = predicted_class
+        
+        return predictions, calculation_steps
+
+    def predict(self, df_containing_features):
+        predictions, _ = self.predict_with_steps(df_containing_features)
         return predictions
 
-
+    def get_probabilities(self, df_containing_features):
+        _, calculation_steps = self.predict_with_steps(df_containing_features)
+        return calculation_steps[0]['final_probabilities'] if calculation_steps else {}
 
 def train_model():
     global trained_model
