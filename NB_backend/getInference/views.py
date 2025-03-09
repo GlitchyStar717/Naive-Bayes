@@ -15,6 +15,7 @@ def run_script(request):
 
 
     input_data = request.data.get('value','')
+    print(input_data)
     df = pd.DataFrame([input_data])
     result = trained_model.predict(df)
     # result = f"Inferred: {input_data}"
