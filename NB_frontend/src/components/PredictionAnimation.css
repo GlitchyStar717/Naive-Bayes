@@ -1,0 +1,64 @@
+.predictions-container {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: var(--gray-800);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.prediction-item {
+  transition: all 0.5s ease-out;
+  margin: 0.5rem 0;
+  padding: 1rem;
+  background: rgba(37, 99, 235, 0.1);
+  border-radius: 6px;
+}
+
+.prediction-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.country-code {
+  font-weight: bold;
+  min-width: 3rem;
+}
+
+.confidence-bar-container {
+  flex: 1;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.confidence-bar {
+  height: 100%;
+  background: var(--primary-color);
+  transform-origin: left;
+  animation: grow 1s ease-out;
+}
+
+.confidence-value {
+  min-width: 4rem;
+  text-align: right;
+}
+
+.prediction-item.active {
+  background: rgba(37, 99, 235, 0.2);
+  transform: scale(1.02);
+}
+
+.prediction-item.previous {
+  opacity: 0.7;
+}
+
+@keyframes grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+} 

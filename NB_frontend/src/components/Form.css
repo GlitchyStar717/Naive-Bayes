@@ -1,0 +1,249 @@
+/* Update root variables to ensure consistency */
+:root {
+  --gradient-start: #2c3e50;
+  --gradient-end: #1a1a2e;
+  --primary-color: #00b4d8;
+  --secondary-color: #48cae4;
+  --accent-color: #90e0ef;
+  --text-primary: #ffffff;
+  --text-secondary: #caf0f8;
+  --background-dark: #1a1a2e;
+  --input-bg: rgba(255, 255, 255, 0.05);
+  --input-border: rgba(255, 255, 255, 0.1);
+  --hover-bg: rgba(255, 255, 255, 0.1);
+}
+
+/* Ensure all text inputs and selects have consistent styling */
+.form-select,
+.form-input,
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+  background: var(--input-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--input-border);
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Style select options */
+.form-select option,
+select option {
+  background-color: var(--background-dark);
+  color: var(--text-primary);
+  padding: 0.75rem;
+}
+
+/* Style select optgroup */
+.form-select optgroup,
+select optgroup {
+  background-color: var(--gradient-start);
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+/* Ensure labels are consistent */
+label,
+.form-label {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+/* Style placeholders */
+::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+/* Style focus states */
+.form-select:focus,
+.form-input:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(0, 180, 216, 0.2);
+}
+
+/* Style hover states */
+.form-select:hover,
+.form-input:hover,
+input:hover,
+select:hover,
+textarea:hover {
+  background-color: var(--hover-bg);
+  border-color: var(--primary-color);
+}
+
+/* Ensure disabled states are consistent */
+.form-select:disabled,
+.form-input:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+}
+
+/* Style error states */
+.form-select.error,
+.form-input.error,
+input.error,
+select.error,
+textarea.error {
+  border-color: #ff6b6b;
+}
+
+/* Ensure all text is properly colored */
+.form-container,
+.form-group,
+.form-text,
+p,
+span,
+div {
+  color: var(--text-primary);
+}
+
+/* Style form container background */
+.form-container {
+  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  margin: 2rem 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.form-title {
+  color: var(--primary-color);
+  margin-bottom: 2rem;
+  font-size: 1.75rem;
+  font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  overflow: hidden;
+}
+
+.form-group {
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Style dropdown arrow for selects */
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.7rem center;
+  background-size: 1em;
+  padding-right: 2.5rem;
+}
+
+/* Ensure autocomplete styles match theme */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px var(--background-dark) inset !important;
+  -webkit-text-fill-color: var(--text-primary) !important;
+}
+
+/* Style any remaining form elements */
+.form-text,
+.help-text,
+.info-text {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+/* Ensure consistent button styling */
+button {
+  background: var(--primary-color);
+  color: var(--text-primary);
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background: var(--secondary-color);
+}
+
+button:disabled {
+  background: var(--input-bg);
+  cursor: not-allowed;
+}
+
+/* Add these styles to ensure mobile consistency */
+@media (max-width: 768px) {
+  .form-container {
+    padding: 1.5rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  input,
+  select,
+  textarea,
+  .form-select,
+  .form-input {
+    font-size: 16px; /* Prevents zoom on mobile */
+  }
+
+  button {
+    width: 100%;
+  }
+}
+
+/* Animations */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Custom scrollbar for select dropdowns */
+.form-select::-webkit-scrollbar {
+  width: 8px;
+}
+
+.form-select::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.form-select::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 4px;
+}
+
+.form-select::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary-color);
+}
+
+/* Hover effect for form groups */
+.form-group:hover .form-label {
+  color: var(--primary-color);
+  transition: color 0.3s ease;
+} 

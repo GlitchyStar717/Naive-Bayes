@@ -2,6 +2,8 @@ import { useState } from 'react';
 import axios from 'axios';
 import './App.css';
 import "./index.css";
+import { PredictionAnimation } from './components/PredictionAnimation';
+import { NaiveBayesVisualization } from './components/NaiveBayesVisualization';
 
 interface StringDictionary {
   [key: string]: string;
@@ -16,10 +18,22 @@ interface CategoryOption {
   step?: number;
 }
 
+interface Prediction {
+  country: string;
+  confidence: number;
+}
+
 interface BackendResponse {
-  result: {
-    employee_residence: string[];
-  };
+  result: Array<{
+    country: string;
+    confidence: number;
+  }>;
+  calculation_steps: Array<{
+    features: Record<string, string>;
+    class_probabilities: Record<string, { prior: number }>;
+    feature_contributions: Record<string, Array<{ feature: string; likelihood: number }>>;
+    final_probabilities: Record<string, number>;
+  }>;
 }
 
 function App() {
@@ -181,17 +195,9 @@ function App() {
 
       {result && (
         <div className="result-container">
-          <h3>Result:</h3>
-          <div>
-            <strong>Employee Residence Prediction:</strong>
-            <ul className="prediction-list">
-              {result.result.employee_residence.map((residence, index) => (
-                <li key={index} className="prediction-item">
-                  <strong>{residence}</strong>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <h3>Predictions:</h3>
+          <PredictionAnimation predictions={result.result} />
+          <NaiveBayesVisualization calculationSteps={result.calculation_steps} />
         </div>
       )}
     </div>

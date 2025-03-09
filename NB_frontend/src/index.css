@@ -113,7 +113,7 @@ button:disabled {
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
-  color: var(--gray-800);
+  color: var(--gray-200);
 }
 
 .result-container {
